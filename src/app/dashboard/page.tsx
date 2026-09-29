@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
+import { ProfileForm } from "./profile-form";
+import { textFields, type Profile } from "./profile-data";
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -8,14 +10,27 @@ export default async function Dashboard() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) redirect("/login");
 
+  const { data: profile, error: profileError } = await supabase.from("profiles")
+    .select([...textFields.map(([field]) => field), "is_published"].join(","))
+    .eq("user_id", user.id).returns<Profile[]>().maybeSingle();
+
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-zinc-50 px-6 py-12 text-center text-zinc-900">
-      <h1 className="text-4xl font-semibold">Linkapsi</h1>
-      <h2 className="text-2xl">Seu painel</h2>
-      <p>Você está autenticado.</p>
-      <button disabled className="rounded bg-zinc-200 px-4 py-2 text-zinc-500">Criar meu perfil</button>
-      <p className="text-sm text-zinc-600">Criação do perfil disponível na próxima etapa.</p>
-      <LogoutButton />
+    <main className="min-h-dvh bg-zinc-50 px-6 py-12 text-zinc-900">
+      <div className="mx-auto grid max-w-2xl gap-6">
+        <header className="flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-semibold">Linkapsi</h1>
+          <LogoutButton />
+        </header>
+        {profileError ? (
+          <p role="alert">Não foi possível carregar seu perfil. Recarregue a página para tentar novamente.</p>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold">{profile ? "Editar meu Linkapsi" : "Crie seu Linkapsi"}</h2>
+            <p className="font-medium">Status: {profile?.is_published ? "Publicado" : "Rascunho"}</p>
+            <ProfileForm profile={profile} />
+          </>
+        )}
+      </div>
     </main>
   );
 }
