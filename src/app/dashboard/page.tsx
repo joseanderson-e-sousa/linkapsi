@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
 import { ProfileForm } from "./profile-form";
@@ -27,6 +28,9 @@ export default async function Dashboard() {
           <>
             <h2 className="text-2xl font-semibold">{profile ? "Editar meu Linkapsi" : "Crie seu Linkapsi"}</h2>
             <p className="font-medium">Status: {profile?.is_published ? "Publicado" : "Rascunho"}</p>
+            {profile?.is_published && profile.slug && (
+              <Link href={`/p/${profile.slug}`} className="w-fit text-sm font-medium underline underline-offset-4">Ver meu Linkapsi</Link>
+            )}
             <ProfileForm profile={profile} />
           </>
         )}
