@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-zinc-50 px-6 py-12 text-center text-zinc-900">
@@ -7,6 +9,10 @@ export default function Home() {
         <span aria-hidden="true" className="size-2 rounded-full bg-emerald-600" />
         Projeto funcionando
       </p>
+      <nav aria-label="Acesso à conta" className="flex gap-4">
+        <Link href="/login" className="underline">Entrar</Link>
+        <Link href="/cadastro" className="underline">Criar conta</Link>
+      </nav>
     </main>
   );
 }

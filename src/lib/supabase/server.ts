@@ -18,7 +18,7 @@ export async function createClient() {
           });
         } catch {
           // Server Components cannot write cookies. Session refresh via Proxy
-          // must be added when authentication is implemented (outside this MVP).
+          // is handled by src/proxy.ts before the page renders.
         }
       },
     },
